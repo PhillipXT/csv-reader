@@ -59,5 +59,8 @@ func readLine(line []byte) int {
 
 	fmt.Println("Line:", string(line[:linefeed]))
 
+	row := parseLine(line[:linefeed])
+	row.Print()
+
 	return linefeed + 1
 }
