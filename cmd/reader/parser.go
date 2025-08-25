@@ -2,6 +2,7 @@ package loader
 
 import (
 	"fmt"
+	"log"
 )
 
 type dataRow struct {
@@ -29,25 +30,24 @@ func parseLine(line []byte) dataRow {
 	quotes := false
 	i := 0
 
+	log.Println("Parsing line:", string(line))
+
 	for {
 		ch := line[i]
 		if ch == quoteDelim {
 			isDelim := true
-			if i < len(line) && line[i+1] == quoteDelim {
+			if quotes == true && i < len(line)-1 && line[i+1] == quoteDelim {
 				isDelim = false
 				i += 1
+				data += string(quoteDelim)
 			}
 			if isDelim {
 				if !quotes {
 					quotes = true
 				} else {
 					quotes = false
-					row.columnCount += 1
-					row.columns = append(row.columns, data)
-					data = ""
 				}
 			}
-			data += string(quoteDelim)
 		} else if ch == colDelim {
 			if quotes == true {
 				data += string(ch)
@@ -61,8 +61,10 @@ func parseLine(line []byte) dataRow {
 		}
 		i += 1
 		if i >= len(line) {
-			row.columnCount += 1
-			row.columns = append(row.columns, data)
+			if data != "" {
+				row.columnCount += 1
+				row.columns = append(row.columns, data)
+			}
 			break
 		}
 	}
