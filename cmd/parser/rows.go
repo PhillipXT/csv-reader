@@ -22,11 +22,6 @@ func getRow(data []byte) int {
 
 	log.Printf("Processing data: %s (%d)", data, len(data))
 	for {
-		if i >= len(data) {
-			i -= 1
-			log.Printf("Returning %d\n", i+1)
-			break
-		}
 		//log.Printf("Processing data: %d = %s\n", i, string(data[i]))
 		if data[i] == dquote {
 			if colPos == 0 {
@@ -52,6 +47,9 @@ func getRow(data []byte) int {
 			quoteMode = false
 			colPos = -1
 		} else if !quoteMode && data[i] == byte('\n') {
+			break
+		}
+		if i >= len(data)-1 {
 			break
 		}
 		i += 1
