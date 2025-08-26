@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -21,26 +20,32 @@ func getRow(data []byte) int {
 	colPos := 0
 	i := 0
 
+	log.Printf("Processing data: %s (%d)", data, len(data))
 	for {
 		if i >= len(data) {
+			i -= 1
+			log.Printf("Returning %d\n", i+1)
 			break
 		}
+		//log.Printf("Processing data: %d = %s\n", i, string(data[i]))
 		if data[i] == dquote {
 			if colPos == 0 {
 				quoteMode = true
 			} else if !quoteMode {
 				log.Fatal("Found double quotes in a non-quoted column.")
 			} else {
-				if data[i+1] == dquote {
+				if i < len(data)-1 && data[i+1] == dquote {
 					i += 1
-				} else if data[i+1] == delim {
+				} else if i < len(data)-1 && data[i+1] == delim {
 					quoteMode = false
 					colPos = -1
 					i += 1
-				} else if data[i+1] == byte('\n') {
+				} else if i < len(data)-1 && data[i+1] == byte('\n') {
+					break
+				} else if i == len(data)-1 {
 					break
 				} else {
-					log.Fatal("Expected new column, found extra characters instead.")
+					log.Fatalf("Expected new column, found extra characters instead (%d = %s/%s)", i, string(data[i]), string(data[i+1]))
 				}
 			}
 		} else if !quoteMode && data[i] == delim {
@@ -53,7 +58,5 @@ func getRow(data []byte) int {
 		colPos += 1
 	}
 
-	fmt.Println("Line:", string(data[:i]))
-
-	return i
+	return i + 1
 }
