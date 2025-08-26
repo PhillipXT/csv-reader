@@ -1,4 +1,4 @@
-package loader
+package parser
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ func (r dataRow) Print() {
 	}
 }
 
-func parseLine(line []byte) dataRow {
+func parseColumns(data []byte) dataRow {
 	row := dataRow{
 		columnCount: 0,
 		columns:     []string{},
@@ -26,20 +26,20 @@ func parseLine(line []byte) dataRow {
 	quoteDelim := byte('"')
 	colDelim := byte(',')
 
-	data := ""
+	content := ""
 	quotes := false
 	i := 0
 
-	log.Println("Parsing line:", string(line))
+	log.Println("Parsing data:", string(data))
 
 	for {
-		ch := line[i]
+		ch := data[i]
 		if ch == quoteDelim {
 			isDelim := true
-			if quotes == true && i < len(line)-1 && line[i+1] == quoteDelim {
+			if quotes == true && i < len(data)-1 && data[i+1] == quoteDelim {
 				isDelim = false
 				i += 1
-				data += string(quoteDelim)
+				content += string(quoteDelim)
 			}
 			if isDelim {
 				if !quotes {
@@ -50,20 +50,20 @@ func parseLine(line []byte) dataRow {
 			}
 		} else if ch == colDelim {
 			if quotes == true {
-				data += string(ch)
+				content += string(ch)
 			} else {
 				row.columnCount += 1
-				row.columns = append(row.columns, data)
-				data = ""
+				row.columns = append(row.columns, content)
+				content = ""
 			}
 		} else {
-			data += string(ch)
+			content += string(ch)
 		}
 		i += 1
-		if i >= len(line) {
-			if data != "" {
+		if i >= len(data) {
+			if content != "" {
 				row.columnCount += 1
-				row.columns = append(row.columns, data)
+				row.columns = append(row.columns, content)
 			}
 			break
 		}

@@ -1,7 +1,6 @@
-package loader
+package parser
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -33,7 +32,7 @@ func LoadCSV(filePath string) {
 		bytesRead, err := file.Read(buf[pos:])
 		if err != nil {
 			if err == io.EOF {
-				readLine(buf[:bytesRead])
+				getRow(buf[:bytesRead])
 				fmt.Println("End of file reached.")
 				break
 			}
@@ -42,25 +41,12 @@ func LoadCSV(filePath string) {
 
 		pos += bytesRead
 
-		bytesUsed := readLine(buf[:pos])
+		bytesUsed := getRow(buf[:pos])
+		row := parseColumns(buf[:bytesUsed])
+		row.Print()
 
 		copy(buf, buf[bytesUsed:])
 
 		pos -= bytesUsed
 	}
-}
-
-func readLine(line []byte) int {
-
-	linefeed := bytes.Index(line, []byte("\n"))
-	if linefeed < 0 {
-		return 0
-	}
-
-	fmt.Println("Line:", string(line[:linefeed]))
-
-	row := parseLine(line[:linefeed])
-	row.Print()
-
-	return linefeed + 1
 }

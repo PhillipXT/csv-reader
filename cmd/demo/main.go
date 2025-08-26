@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	loader "github.com/PhillipXT/csv-reader/cmd/reader"
+	"github.com/PhillipXT/csv-reader/cmd/parser"
 )
 
 func main() {
@@ -13,5 +13,5 @@ func main() {
 		fmt.Println("Error checking working directory:", err)
 	}
 	fmt.Printf("Working directory: %s\n", dir)
-	loader.LoadCSV("./assets/test.csv")
+	parser.LoadCSV("./assets/test.csv")
 }
