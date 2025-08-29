@@ -74,7 +74,7 @@ func processData(data []byte, eof bool) (int, error) {
 		row := parseColumns(data[totalBytesUsed : totalBytesUsed+bytesUsed])
 		row.Print()
 
-		totalBytesUsed += bytesUsed
+		totalBytesUsed += bytesUsed + 1
 	}
 
 	return totalBytesUsed, nil

@@ -20,6 +20,7 @@ func getRow(data []byte, eof bool) int {
 	colPos := 0
 	i := 0
 	foundRow := false
+	hasLinefeed := false
 
 	if len(data) == 0 {
 		return 0
@@ -41,6 +42,7 @@ func getRow(data []byte, eof bool) int {
 					colPos = -1
 					i += 1
 				} else if i < len(data)-1 && data[i+1] == byte('\n') {
+					hasLinefeed = true
 					foundRow = true
 					break
 				} else if i >= len(data)-1 && eof == true {
@@ -56,6 +58,7 @@ func getRow(data []byte, eof bool) int {
 			quoteMode = false
 			colPos = -1
 		} else if !quoteMode && data[i] == byte('\n') {
+			hasLinefeed = true
 			foundRow = true
 			break
 		}
@@ -70,7 +73,7 @@ func getRow(data []byte, eof bool) int {
 	}
 
 	if foundRow {
-		if eof {
+		if eof && !hasLinefeed {
 			return i
 		}
 		return i + 1
