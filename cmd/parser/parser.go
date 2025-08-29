@@ -7,8 +7,7 @@ import (
 	"os"
 )
 
-// TODO:  Doesn't work when bufferSize = 64
-const bufferSize = 64
+const bufferSize = 32
 
 func LoadCSV(filePath string) {
 	file, err := os.Open(filePath)
