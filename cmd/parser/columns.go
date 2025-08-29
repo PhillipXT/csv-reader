@@ -46,11 +46,7 @@ func parseColumns(data []byte) dataRow {
 				content += string(quoteDelim)
 			}
 			if isDelim {
-				if !quotes {
-					quotes = true
-				} else {
-					quotes = false
-				}
+				quotes = !quotes
 			}
 		} else if ch == colDelim {
 			if quotes == true {
