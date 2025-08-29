@@ -60,15 +60,13 @@ func parseColumns(data []byte) dataRow {
 				row.columns = append(row.columns, content)
 				content = ""
 			}
-		} else {
+		} else if !(i == len(data)-1 && ch == byte('\n')) {
 			content += string(ch)
 		}
 		i += 1
 		if i >= len(data) {
-			if content != "" {
-				row.columnCount += 1
-				row.columns = append(row.columns, content)
-			}
+			row.columnCount += 1
+			row.columns = append(row.columns, content)
 			break
 		}
 	}
