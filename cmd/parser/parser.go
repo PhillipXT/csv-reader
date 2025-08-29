@@ -7,7 +7,8 @@ import (
 	"os"
 )
 
-const bufferSize = 8
+// TODO:  Doesn't work when bufferSize = 64
+const bufferSize = 64
 
 func LoadCSV(filePath string) {
 	file, err := os.Open(filePath)
@@ -69,10 +70,11 @@ func processData(data []byte, eof bool) (int, error) {
 			break
 		}
 
-		totalBytesUsed += bytesUsed
 		fmt.Printf("bytesUsed: %d\n", bytesUsed)
-		row := parseColumns(data[:bytesUsed])
+		row := parseColumns(data[totalBytesUsed : totalBytesUsed+bytesUsed])
 		row.Print()
+
+		totalBytesUsed += bytesUsed
 	}
 
 	return totalBytesUsed, nil
