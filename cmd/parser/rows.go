@@ -46,6 +46,8 @@ func getRow(data []byte, eof bool) int {
 				} else if i >= len(data)-1 && eof == true {
 					foundRow = true
 					break
+				} else if i >= len(data)-1 {
+					break
 				} else {
 					log.Fatalf("Expected new column, found extra characters instead (%d = %s/%s)", i, string(data[i]), string(data[i+1]))
 				}
@@ -68,6 +70,9 @@ func getRow(data []byte, eof bool) int {
 	}
 
 	if foundRow {
+		if eof {
+			return i
+		}
 		return i + 1
 	}
 
