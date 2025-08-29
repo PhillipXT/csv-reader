@@ -34,8 +34,7 @@ func LoadCSV(filePath string) {
 		if err == io.EOF {
 			fmt.Println("End of file reached.")
 			eof = true
-		}
-		if err != nil {
+		} else if err != nil {
 			log.Fatal("Error reading file:", err)
 		}
 
