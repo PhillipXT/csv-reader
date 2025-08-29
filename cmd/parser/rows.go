@@ -62,7 +62,9 @@ func getRow(data []byte, eof bool) int {
 			foundRow = true
 			break
 		}
-		if i >= len(data)-1 {
+		if i >= len(data)-1 && !foundRow && eof && quoteMode {
+			log.Fatalf("Malformed column - no end quote found")
+		} else if i >= len(data)-1 {
 			if eof == true {
 				foundRow = true
 			}
