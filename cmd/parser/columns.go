@@ -1,8 +1,10 @@
 package parser
 
 import (
+	"bytes"
 	"fmt"
 	"log"
+	"strings"
 )
 
 type dataRow struct {
@@ -13,7 +15,8 @@ type dataRow struct {
 
 func (r dataRow) Print() {
 	for i, col := range r.columns {
-		fmt.Printf("Column %d: %s\n", i, col)
+		output := strings.ReplaceAll(col, "\n", "\\n")
+		fmt.Printf("Column %d: %s\n", i, output)
 	}
 }
 
@@ -30,7 +33,8 @@ func parseColumns(data []byte) dataRow {
 	quotes := false
 	i := 0
 
-	log.Println("Parsing data:", string(data))
+	output := bytes.ReplaceAll(data, []byte("\n"), []byte("\\n"))
+	log.Printf("Parsing data: %s\n", string(output))
 
 	for {
 		ch := data[i]

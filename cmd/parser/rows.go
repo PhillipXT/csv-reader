@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"bytes"
 	"log"
 )
 
@@ -26,7 +27,9 @@ func getRow(data []byte, eof bool) int {
 		return 0
 	}
 
-	log.Printf("Processing data: %s (%d)", data, len(data))
+	output := bytes.ReplaceAll(data, []byte("\n"), []byte("\\n"))
+	log.Printf("Processing data: %s (%d)", output, len(data))
+
 	for {
 		//log.Printf("Processing data: %d = %s\n", i, string(data[i]))
 		if data[i] == dquote {
