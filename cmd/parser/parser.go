@@ -19,6 +19,7 @@ func LoadCSV(filePath string) {
 
 	buf := make([]byte, bufferSize)
 	pos := 0
+	eof := false
 
 	for {
 		if pos >= len(buf) {
@@ -30,23 +31,50 @@ func LoadCSV(filePath string) {
 		//fmt.Printf("Buffer size: %d\n", len(buf))
 
 		bytesRead, err := file.Read(buf[pos:])
+		if err == io.EOF {
+			fmt.Println("End of file reached.")
+			eof = true
+		}
 		if err != nil {
-			if err == io.EOF {
-				getRow(buf[:bytesRead])
-				fmt.Println("End of file reached.")
-				break
-			}
 			log.Fatal("Error reading file:", err)
 		}
 
 		pos += bytesRead
 
-		bytesUsed := getRow(buf[:pos])
-		row := parseColumns(buf[:bytesUsed])
-		row.Print()
+		bytesUsed, err := processData(buf[:pos], eof)
+		if err != nil {
+			fmt.Println("Error: ", err)
+		}
 
-		copy(buf, buf[bytesUsed:])
+		if bytesUsed > 0 {
+			copy(buf, buf[bytesUsed:])
+			pos -= bytesUsed
+		}
 
-		pos -= bytesUsed
+		if eof {
+			break
+		}
 	}
+}
+
+func processData(data []byte, eof bool) (int, error) {
+	totalBytesUsed := 0
+
+	if len(data) == 0 {
+		return 0, nil
+	}
+
+	for {
+		bytesUsed := getRow(data[totalBytesUsed:], eof)
+		if bytesUsed == 0 {
+			break
+		}
+
+		totalBytesUsed += bytesUsed
+		fmt.Printf("bytesUsed: %d\n", bytesUsed)
+		row := parseColumns(data[:bytesUsed])
+		row.Print()
+	}
+
+	return totalBytesUsed, nil
 }
