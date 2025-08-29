@@ -60,11 +60,15 @@ func LoadCSV(filePath string) {
 func processData(data []byte, eof bool) (int, error) {
 	totalBytesUsed := 0
 
-	if len(data) == 0 {
-		return 0, nil
-	}
-
 	for {
+		if len(data) == 0 {
+			return 0, nil
+		}
+
+		if totalBytesUsed >= len(data) {
+			return len(data), nil
+		}
+
 		bytesUsed := getRow(data[totalBytesUsed:], eof)
 		if bytesUsed == 0 {
 			break
