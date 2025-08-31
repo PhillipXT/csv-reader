@@ -12,11 +12,11 @@ func TestColumnParser(t *testing.T) {
 
 	// Test: Valid single row
 	log.Println("Testing valid single row...")
-	data := []byte(`One,Two,Three,Four,Five`)
+	data := []byte(`One,Two,Three,Four,Aa09!Øڃಚ𠜎😁`)
 	row := parseColumns(data)
 	row.Print()
 	assert.Equal(t, 5, row.columnCount)
-	assert.Equal(t, []string{`One`, `Two`, `Three`, `Four`, `Five`}, row.columns)
+	assert.Equal(t, []string{`One`, `Two`, `Three`, `Four`, `Aa09!Øڃಚ𠜎😁`}, row.columns)
 
 	// Test: Valid field with a comma
 	log.Println("Testing valid field with a comma...")

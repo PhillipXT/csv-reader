@@ -26,8 +26,8 @@ func parseColumns(data []byte) dataRow {
 		columns:     []string{},
 	}
 
-	quoteDelim := byte('"')
-	colDelim := byte(',')
+	quoteDelim := rune('"')
+	colDelim := rune(',')
 
 	content := ""
 	quotes := false
@@ -36,11 +36,15 @@ func parseColumns(data []byte) dataRow {
 	output := bytes.ReplaceAll(data, []byte("\n"), []byte("\\n"))
 	log.Printf("Parsing data: %s\n", string(output))
 
+	data = bytes.TrimSuffix(data, []byte("\n"))
+
+	runes := []rune(string(data))
+
 	for {
-		ch := data[i]
+		ch := runes[i]
 		if ch == quoteDelim {
 			isDelim := true
-			if quotes == true && i < len(data)-1 && data[i+1] == quoteDelim {
+			if quotes == true && i < len(runes)-1 && runes[i+1] == quoteDelim {
 				isDelim = false
 				i += 1
 				content += string(quoteDelim)
@@ -56,11 +60,11 @@ func parseColumns(data []byte) dataRow {
 				row.columns = append(row.columns, content)
 				content = ""
 			}
-		} else if !(i == len(data)-1 && ch == byte('\n')) {
+		} else {
 			content += string(ch)
 		}
 		i += 1
-		if i >= len(data) {
+		if i >= len(runes) {
 			row.columnCount += 1
 			row.columns = append(row.columns, content)
 			break
